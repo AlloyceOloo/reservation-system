@@ -2,8 +2,10 @@ package com.amenity_reservation_system.service;
 
 import com.amenity_reservation_system.model.Reservation;
 import com.amenity_reservation_system.repos.ReservationRepository;
+import com.amenity_reservation_system.domain.User;
 import com.amenity_reservation_system.repos.UserRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
