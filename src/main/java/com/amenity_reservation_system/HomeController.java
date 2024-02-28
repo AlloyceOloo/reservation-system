@@ -3,11 +3,17 @@ package com.amenity_reservation_system;
 import com.amenity_reservation_system.model.Reservation;
 import com.amenity_reservation_system.model.User;
 import com.amenity_reservation_system.service.ReservationService;
+import com.amenity_reservation_system.service.UserDetailsServiceImpl;
 import com.amenity_reservation_system.service.UserService;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
@@ -35,12 +41,23 @@ public class HomeController {
 
     @GetMapping("/reservations")
     public String reservations(Model model, HttpSession session) {
-        User user = userService.get(10000L);
-        session.setAttribute("user", user);
-        Reservation reservation = new Reservation();
-        model.addAttribute("reservation", reservation);
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	String name = principal.getUsername();
+	User user = userService.getUserByUsername(name);
 
-        return "reservations";
+	if (user != null) {
+		session.setAttribute("user", user);
+
+		Reservation reservation = new Reservation();
+		model.addAttribute("reservation", reservation);
+
+		return "reservations";
+	}
+        //session.setAttribute("user", user);
+        //Reservation reservation = new Reservation();
+        //model.addAttribute("reservation", reservation);
+
+        return "index";
     }
 
     @PostMapping("/reservations-submit")
